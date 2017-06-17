@@ -1,0 +1,1142 @@
+// _______________ FONTS _______________ //
+
+@font-face
+	font-family: Aller Bold
+	src: url("/assets/fonts/Aller_Bold.ttf")
+
+// _______________ COLORS ______________ //
+
+// Background
+$bgGradientBottom: rgba(255, 0, 170, 0.3)
+$bgGradientTop: rgba(100, 0, 150, 0.3)
+$user_content_wrapper_bg: rgba(218, 0, 184, 0.13)
+$user_content_wrapper_glowing: rgba(255, 125, 255, 1)
+
+$user_profile_border_color: rgba(255, 125, 255, 0.2)
+
+$input_text_color: #ffe3ff
+$borderAvatarColor: white //rgb(177, 0, 158)
+
+$profileHrColor: white
+
+$extraBaseColor: #ff00a8
+
+$lvlBarBgColorTop: #e400be
+$lvlBarBgColorBottom: #4e004b
+
+// __________ FOR ANIMATIONS __________ //
+
+$speedOfHidingInput: 150ms
+$speedOfOpeningConentWrapper: 300ms
+$speedOfGoingToTopContentWrapper: 200ms
+$delayToGoingToTopForContentWrapper: $speedOfHidingInput + $speedOfOpeningConentWrapper + 300ms
+$delayToAvatarShine: $delayToGoingToTopForContentWrapper + $speedOfGoingToTopContentWrapper + 100ms
+
+$widthForUserContentWrapperWhenItsOpen: 600px
+$heightForUserContentWrapperWhenItsOpen1: 150px
+
+// ______________ STATIC ______________ //
+
+$borderContent: 1px
+$avatarSize: 130px
+
+$user_content_wrapper_height: 80px
+$user_content_wrapper_width: 340px
+
+$rankingLetterSize: 30px
+
+$gup: 20px
+
+$topOfUserFeed: $heightForUserContentWrapperWhenItsOpen1 + $gup
+
+$maxHeightUserFeed: 700px
+
+$maxHeightBody: $heightForUserContentWrapperWhenItsOpen1 + $maxHeightUserFeed + $gup * 3
+
+$api_key_wrapper_height: 84px
+
+$input_api_width: 450px
+$input_api_height: 36px
+// ______________ STYLES ______________ //
+
+html
+	min-width: $widthForUserContentWrapperWhenItsOpen + $gup * 2
+	height: 100%
+
+body
+	background-color: #650e56
+	min-height: 370px
+	height: 100%
+	margin: 0
+	padding: 0
+
+	::selection
+		background: #d11aa4
+		color: white
+
+	> .loading_content
+		height: 100%
+		$Dwidth: 8px
+		$Dheight: 30px
+		min-height: inherit
+		position: relative
+
+		> .loader
+			display: flex
+			position: absolute
+			width: $Dwidth*5
+			height: $Dheight
+			justify-content: space-around
+			top: calc(50% - #{$Dheight} / 2)
+			left: calc(50% - #{$Dwidth*5} / 2)
+
+			> div
+				width: $Dwidth
+				height: $Dheight
+				background-color: white
+				transform: scale(1)
+				box-shadow: none
+				opacity: 0
+
+			@for $i from 1 through 3
+				.l#{$i}
+					animation: desh_loading 400ms ease #{($i - 1)*100}ms infinite alternate
+
+			@keyframes desh_loading
+				from
+					box-shadow: none
+				to
+					transform: scale(1.1)
+					opacity: 1
+					box-shadow: 0px 0px 4px white
+
+	> .overall_wrapper
+		background-size: cover
+		display: none
+		position: relative
+		height: 100%
+		background: linear-gradient(to top, $bgGradientBottom, $bgGradientTop), url("/assets/img/bg_pattern.png")
+		background-position: center
+		animation: onload_show_overall 300ms ease forwards
+		opacity: 0
+
+		@keyframes onload_show_overall
+			to
+				opacity: 1
+			
+		>	.api_key_wrapper
+			visibility: hidden
+			position: absolute
+			opacity: 0
+			right: 0
+			bottom: 0
+			left: calc(50% - #{$input_api_width / 2})
+			width: $input_api_width
+			height: $api_key_wrapper_height
+			transform: translateX(-40px)
+
+			&.without_key
+				visibility: visible
+				animation: please_enter_key 500ms ease 300ms forwards 
+
+				@keyframes please_enter_key
+					to
+						opacity: 1
+						transform: translateX(0px)
+
+			&.with_key
+				visibility: visible
+				animation: thanks_for_key 500ms ease 0ms forwards 
+				transform: translateX(0px)
+				opacity: 1
+
+				@keyframes thanks_for_key
+					to
+						opacity: 0
+						transform: translateX(40px)
+
+
+			> h1
+				position: absolute
+				top: 0px
+				margin: 0
+				padding: 0
+				width: 100%
+				color: rgba(white, 0.7)
+				text-align: center
+				user-select: none
+				cursor: default
+				white-space: nowrap
+				font: 
+					family: Comfortaa
+					size: 20px
+
+				> a
+					position: relative
+					text-decoration: none
+					color: inherit
+					top: 3px
+					outline: none
+					font:
+						family: Aller Bold
+						size: 30px
+						weight: 100
+
+					&:focus
+						outline: none
+						border: none
+						text-decoration: none
+						border: none
+
+					&:active
+						outline: none
+						border: none
+						text-decoration: none 
+						border: none
+
+					&:hover
+						text-shadow: 0px 0px 6px $extraBaseColor,  0px 0px 6px$extraBaseColor
+
+			> input#input_api_key
+				position: absolute
+				left: calc(50% - #{$input_api_width / 2})
+				bottom: 4px
+				background-color: transparent
+				box-sizing: border-box
+				border-radius: 20px
+				margin: 0
+				border: $borderContent solid $user_profile_border_color
+				color: $input_text_color
+				text-align: center
+				width: $input_api_width
+				height: $input_api_height
+				text-shadow: 0px 0px 4px $extraBaseColor
+				overflow: visible
+				box-shadow: none
+				transition: box-shadow 600ms ease, transform 150ms ease
+				font:
+					size: 20px
+					family: Aller Bold
+				
+				&:focus
+					box-shadow: 0px 0px 4px white, 0px 0px 10px white
+					outline: none
+			
+		>	.support_wrapper
+			position: absolute
+			bottom: 0px
+			right: 0px
+			width: 30px
+			height: 30px
+
+			&:hover 
+				> .msg_wrapper
+					visibility: visible
+					transform: translateY(0px)
+					opacity: 1
+					transition: all 300ms ease 0s
+		
+				> .heart
+					transition: opacity 300ms ease 0s
+					opacity: 0
+
+			>	.msg_wrapper
+				position: absolute
+				bottom: 0px
+				right: 0px
+				width: 300px
+				visibility: hidden
+				opacity: 0
+				transform: translateY(-20px)
+				transition: all 200ms ease 0s
+				user-select: none
+				cursor: default
+
+				>	.msg
+					margin: 0px 4px 4px 0px
+					padding: 0
+					border: $borderContent solid $user_profile_border_color
+					background-color: $user_content_wrapper_bg
+					border-radius: 6px
+					box-sizing: border-box
+					color: white
+					box-shadow: inset 0px 0px 20px rgba(255, 255, 255, 0.1)
+						
+					>	header
+						margin-top: 10px
+						display: flex
+						width: 100%
+						height: 70px
+						flex-flow: row nowrap
+						justify-content: center
+
+						>	.logo
+							position: relative
+							width: 85px
+							height: 70px
+							background: url("/assets/img/logo.png") no-repeat
+
+							>	.version
+								position: absolute
+								bottom: 0px
+								right: 0px
+								transform: translateX(100%)
+								opacity: 0.5
+								font: 
+									family: sans-serif
+									size: 10px
+
+					> h1
+						margin: 10px 10px
+						padding: 0
+						opacity: 0.8
+						line-height: 20px
+						text-indent: 4px
+						text-align: justify
+						font:
+							family: sans-serif
+							size: 15px
+							weight: 100
+
+						&:first-of-type
+							font-size: 20px
+
+						> a
+							text-decoration: none
+							color: inherit
+							outline: none
+							font:
+								family: inherit
+								weight: bold
+								style: italic
+
+							&:focus
+								outline: none
+								border: none
+								text-decoration: none
+								border: none
+
+							&:active
+								outline: none
+								border: none
+								text-decoration: none 
+								border: none
+
+							&:hover
+								text-shadow: 0px 0px 6px $extraBaseColor,  0px 0px 6px$extraBaseColor
+
+			> .heart
+				position: absolute
+				width: 30px
+				height: 30px
+				box-sizing: border-box
+				background: url("/assets/img/heart.png") no-repeat
+				background-position: center center
+				opacity: 1
+				transition: opacity 200ms ease 0s
+				animation: support_heartbeat 2000ms ease 0s infinite
+				transform: scale(1)
+
+				@keyframes support_heartbeat
+					0%
+						transform: scale(1)
+					20%
+						transform: scale(0.9)
+					90%
+						transform: scale(0.9)
+					0%
+						transform: scale(1)
+
+		> .user_content_wrapper
+			position: absolute
+			overflow: visible
+			box-sizing: border-box
+			width: $user_content_wrapper_width
+			height: $user_content_wrapper_height
+			top: calc(50% - #{$user_content_wrapper_height} / 2)
+			left: calc(50% - #{$user_content_wrapper_width} / 2)
+			right: calc(50% - #{$user_content_wrapper_width} / 2)
+			transform: scale(0.8)
+			will-change: auto
+
+			&.zoom_in_content_wrapper
+				animation: zoom_in_content_wrapper 300ms ease forwards
+
+				@keyframes zoom_in_content_wrapper
+					to
+						transform: scale(1)				
+
+			> form.select_user
+				position: relative
+				margin: 0 auto
+				height: $user_content_wrapper_height
+				width: $user_content_wrapper_width
+				border-radius: 6px
+
+				> h1
+					position: absolute
+					top: -44px 
+					margin: 0
+					padding: 0
+					width: 100%
+					color: rgba(white, 0.7)
+					text-align: center
+					user-select: none
+					cursor: default
+					white-space: nowrap
+					font: 
+						family: Comfortaa
+						size: 20px
+
+					> a
+						position: relative
+						text-decoration: none
+						color: inherit
+						top: 1px
+						outline: none
+						font:
+							family: Aller Bold
+							size: 30px
+							weight: 100
+
+						&:focus
+							outline: none
+							border: none
+							text-decoration: none
+							border: none
+
+						&:active
+							outline: none
+							border: none
+							text-decoration: none 
+							border: none
+
+						&:hover
+							text-shadow: 0px 0px 6px $extraBaseColor,  0px 0px 6px$extraBaseColor
+
+				> input
+					background-color: transparent
+					box-sizing: border-box
+					border-radius: 6px
+					margin: 0 auto
+					border: none
+					color: $input_text_color
+					text-align: center
+					width: $user_content_wrapper_width
+					height: $user_content_wrapper_height
+					text-shadow: 0px 0px 4px $extraBaseColor
+					overflow: visible
+					box-shadow: none
+					transition: box-shadow 600ms ease, transform 150ms ease
+					font:
+						size: 35px
+						family: Aller Bold
+					
+					&:focus
+						box-shadow: 0px 0px 4px white, 0px 0px 10px white
+						outline: none
+
+			> .error_cloud
+				position: absolute
+				visibility: hidden
+				width: 100%
+				top: 90px
+				user-select: none
+				opacity: 0.1
+				cursor: default
+
+				&.show_error
+					animation: show_error 1000ms ease-out
+
+					@keyframes show_error
+						0%
+							visibility: visible
+							left: -40px
+						30%
+							opacity: 1
+						90%
+							left: 36px
+							opacity: 1
+						100%
+							left: 40px
+
+				> h1
+					margin: 0
+					padding: 0
+					color: rgba(white, 0.7)
+					text-align: center
+					white-space: nowrap
+					font: 
+						family: Comfortaa
+						size: 20px
+
+			> .user_profile
+				display: flex
+				position: absolute
+				align-items: center
+				justify-content: center
+				top: 0
+				width: 100%
+				height: 100%
+				box-sizing: border-box
+				border: $borderContent solid $user_profile_border_color
+				border-radius: 6px
+				background: $user_content_wrapper_bg
+				transition: left 200ms ease, right 200ms ease
+
+				> .personal_row
+					display: none
+					box-sizing: border-box
+					flex-flow: row nowrap
+					padding: 10px
+					font-size: 0
+					width: $widthForUserContentWrapperWhenItsOpen
+					height: $heightForUserContentWrapperWhenItsOpen1
+					transform: scale(0.4)
+					opacity: 0
+					
+					> a.avatar
+						display: flex
+						position: relative
+						min-width: $avatarSize
+						min-height: $avatarSize
+						justify-content: center
+						align-items: center
+						box-sizing: border-box
+						user-select: none
+
+						&::after
+							position: absolute
+							content: ''
+							top: 0
+							left: 0
+							width: 100%
+							height: 100%
+
+						&:focus
+							outline: none
+							border: none
+							text-decoration: none
+							border: none
+
+						&:active
+							outline: none
+							border: none
+							text-decoration: none 
+							border: none
+
+						> img
+							display: inline-block
+							max-width: $avatarSize
+							max-height: $avatarSize
+							box-sizing: border-box
+							image-rendering: auto
+							vertical-align: top
+							border-radius: 4px
+							border: $borderContent+2 solid $borderAvatarColor
+
+					> .user_stuff
+						display: flex
+						// max-width: 100%
+						width: 100%
+						height: 100%
+						flex-flow: column nowrap
+						box-sizing: border-box
+						padding-left: 10px
+
+						> .username_and_ranking
+							display: flex
+							flex-wrap: nowrap
+							justify-content: space-between
+							width: 100%
+							height: 52px
+
+							> .username
+								display: flex
+								align-items: center
+								height: 100%
+								box-sizing: border-box
+								margin-right: 20px
+
+								> a
+									cursor: pointer
+									text-decoration: none
+									padding: 0
+									user-select: none
+									color: white
+									white-space: nowrap
+									align-self: baseline
+									font:
+										family: Aller Bold
+										style: italic
+										size: 37px
+
+									&:focus
+										outline: none
+										border: none
+										text-decoration: none
+										border: none
+
+									&:active
+										outline: none
+										border: none
+										text-decoration: none 
+										border: none
+
+									&:hover
+										text-shadow: 0px 0px 6px $extraBaseColor, 0px 0px 6px $extraBaseColor
+										outline: none
+										border: none
+										text-decoration: none 
+										border: none
+
+							>	.ranking
+								position: relative
+								display: flex
+								bottom: 4px
+								flex-flow: column nowrap
+								height: 100%
+								box-sizing: border-box
+								user-select: none
+								align-items: center
+								justify-content: space-around
+								cursor: default
+
+								> h2
+									margin: 0
+									padding: 0
+									color: white
+									font:
+										family: Aller Bold
+
+								>	h2.pp
+									color: white
+									font-size: 24px
+
+									> span
+										font-size: 15px
+
+								>	h2.rank
+									font-size: 14px
+
+								>	.hr
+									width: 128px
+									min-height: 1px
+									display: block
+									margin: 3px 0px
+									background: url("/assets/img/slashRanking.png")
+
+						> .detail_row
+							cursor: default
+							display: flex
+							width: 100%
+							height: 52px
+							box-sizing: border-box
+							user-select: none
+							color: white
+
+							>	.acc_and_pc
+								display: flex
+								flex-flow: column nowrap
+								justify-content: space-around
+
+								> div
+									display: flex
+								
+								h1, h2
+									margin: 0
+									padding: 0
+									white-space: nowrap
+									font: 
+										family: Aller Bold
+										size: 20px
+
+								h1
+									width: 110px
+
+								h2
+
+								>	.acc
+									> h1
+									>	h2
+								>	.pc
+									> h1
+									>	h2
+									
+							>	.count_ranks_row
+								width: 100%
+								padding: 4px 0px 4px 6px
+
+								> .count_ranks_wrapper
+									display: flex
+									flex-flow: row nowrap
+									height: 100%
+									box-sizing: border-box
+									border: 1px solid $user_profile_border_color
+									border-radius: 6px
+									box-shadow: 0px 0px 6px $user_profile_border_color
+									justify-content: space-around
+									
+									> div
+										display: flex
+										height: 100%
+										align-items: center
+										overflow: visible
+										justify-content: center
+
+										> h1
+											margin: 0px 4px
+											padding: 0
+											font:
+												family: Aller Bold
+												size: 20px
+												weight: 100
+												style: italic
+
+										> .img
+											width: $rankingLetterSize
+											height: $rankingLetterSize
+											image-rendering: auto
+											vertical-align: top
+											background-position: center
+											background-repeat: no-repeat
+											border: none
+											outline: none
+
+
+									>	.cout_ss
+										>	h1
+										>	.img
+											background-image: url("/assets/img/ranking_letters/X.png")
+									>	.cout_s
+										>	h1
+										>	.img
+											background-image: url("/assets/img/ranking_letters/S.png")
+									>	.cout_a
+										>	h1
+										>	.img
+											background-image: url("/assets/img/ranking_letters/A.png")
+
+
+						> .lvl_row
+							position: relative
+							width: 100%
+							height: 20%
+							box-sizing: border-box
+							user-select: none
+							padding-top: 10px
+							cursor: default
+
+							> .lvl_bar_background
+								position: absolute
+								height: 16px
+								width: 100%
+								bottom: 0
+								background-color: rgba($lvlBarBgColorTop, 0.2)
+								border-radius: 10px
+							
+							>	.lvl_bar_wrapper
+								height: 16px
+
+								> .lvl_bar
+									height: 100%
+									width: 0px
+									border-radius: 10px
+									background: linear-gradient(to top, $lvlBarBgColorTop 0%, $lvlBarBgColorBottom 100%) 
+									box-shadow: 0px 0px 10px $user_content_wrapper_glowing
+
+									>	.lvl_pattern
+										width: 100%
+										height: 100%
+										border-radius: 10px
+										box-shadow: inset 0px 0px 10px $extraBaseColor,  inset 0px 0px 10px $extraBaseColor
+										background-image: url("/assets/img/lvlPattern.png")
+
+							> .current_level
+								position: absolute
+								display: inline-flex
+								align-items: center
+								height: 16px
+								top: 10px
+								left: 0px
+								right: 0px
+								justify-content: center
+
+								> h1, span
+									margin: 0
+									padding: 0
+									text-shadow: 0px 0px 2px black
+									color: white
+									font:
+										family: Aller Bold
+										size: 14px
+										weight: 100
+
+								> h1
+									margin-right: 6px
+
+			> .user_feed
+				visibility: hidden
+				position: absolute
+				top: 0px
+				width: 100%
+				height: 0px
+				box-sizing: border-box
+				border: $borderContent solid $user_profile_border_color
+				border-radius: 6px
+				background: $user_content_wrapper_bg
+				opacity: 0
+
+				> .header
+					display: flex
+					justify-content: center
+					align-items: center
+					margin: 0 auto
+					width: 100%
+					height: 36px
+					cursor: default
+					user-select: none
+					border-bottom: 1px solid $user_profile_border_color
+					border-radius: 6px
+
+					> h1
+						position: relative
+						color: white
+						margin: 0
+						padding: 0
+						text-shadow: 0px 0px 10px $extraBaseColor,  0px 0px 10px $extraBaseColor
+						font:
+							family: Aller Bold
+							size: 20px
+							weight: 100
+
+				> .plays_feed
+					min-height: 70px
+
+					> h1.start
+						cursor: default
+						user-select: none
+						display: flex
+						color: white
+						margin: 0
+						padding: 0
+						width: 100%
+						height: 70px
+						justify-content: center
+						align-items: center
+						opacity: 0.2
+						font:
+							size: 15px
+							family: Aller Bold
+							style: italic
+							
+					> .hr
+						// width: 570px
+						width: 100%
+						height: 1px
+						margin: 0px auto
+						background-color: $user_profile_border_color
+
+
+					> .play_record
+						display: none
+						cursor: default
+						user-select: none
+						flex-flow: row nowrap
+						height: 70px
+						width: 100%
+						box-sizing: border-box
+						padding: 4px
+						transform: translateX(-20px)
+						opacity: 0
+						animation: addNewScoreRecord 300ms ease 0s forwards
+
+						@keyframes addNewScoreRecord
+							to
+								opacity: 1
+								transform: translateX(0px)
+
+
+						&:hover
+							background: $user_content_wrapper_bg
+
+						h1, span, time
+							margin: 0
+							padding: 0
+							color: white
+
+
+						.in_loading
+							opacity: 0.4
+
+
+						> a.mapset_avatar
+							display: flex
+							justify-content: center
+							align-items: center
+							position: relative
+							width: 82px
+							height: 62px
+							min-width: 82px
+							min-height: 62px
+							cursor: pointer
+
+							&::after
+								position: absolute
+								content: ''
+								top: 0
+								left: 0
+								width: 100%
+								height: 100%
+
+							&:focus
+								outline: none
+								border: none
+								text-decoration: none
+								border: none
+
+							&:active
+								outline: none
+								border: none
+								text-decoration: none 
+								border: none
+
+							> img
+								box-sizing: border-box
+								max-width: 82px
+								max-height: 62px
+								border-radius: 4px
+								border: 1px solid white
+
+						> .general_play_information
+							display: flex
+							width: 100%
+							flex-flow: column nowrap
+							justify-content: space-around
+
+							> .title_row
+								display: flex
+								padding-left: 4px
+								flex-flow: row nowrap
+								height: 26px
+								align-items: center
+								
+								h1, span
+									font:
+										size: 15px
+										family: Aller Bold
+
+								> .rank_img
+									flex-basis: 24px
+									width: 24px
+									height: 24px
+									min-width: 24px
+									min-height: 24px
+									background-image: url(/assets/img/ranking_letters/S.png)
+									background-size: contain
+									background-position: center
+									background-repeat: no-repeat
+
+								>	a.link_title
+									display: flex
+									max-width: 330px
+									flex-flow: row nowrap
+									cursor: pointer
+									height: 26px
+									align-items: center
+									text-decoration: none
+
+									&:hover
+										text-shadow: 0px 0px 4px $extraBaseColor, 0px 0px 4px $extraBaseColor
+
+									&:focus
+										text-decoration: none
+										outline: none
+										border: none
+										text-decoration: none
+										border: none
+
+									&:active
+										text-decoration: none
+										outline: none
+										border: none
+										text-decoration: none 
+										border: none
+
+									> h1.title
+										display: inline
+										padding-left: 4px
+										white-space: nowrap
+										text-overflow: ellipsis
+										overflow: hidden
+
+									> h1.difficulty
+										margin-left: 4px
+										white-space: nowrap
+
+								> .starrate
+									margin-left: 4px
+									display: flex
+									flex-flow: row nowrap
+									align-items: center
+									width: 44px
+									> h1
+									> .star
+										position: relative
+										bottom: 1px
+										width: 12px
+										height: 11px
+										min-width: 12px
+										min-height: 11px
+										background: url("/assets/img/star.png")
+
+							> .detail.row
+								display: flex
+								flex-flow: row nowrap
+								align-items: center
+								padding-left: 4px
+								height: 20px
+
+								> span
+									font:
+										family: Arial
+										size: 14px
+										style: italic
+
+								> span.ras
+									margin: 0px 2px
+
+								>span.def
+									margin: 0px 6px
+
+							> .time_row
+								display: flex
+								flex-flow: row nowrap
+								align-items: center
+								opacity: 0.4
+								padding-left: 4px
+
+								> time
+									font:
+										size: 12px
+										family: Aller Bold
+
+
+						> .pp_and_mods
+							display: flex
+							flex-flow: column nowrap
+							height: 100%
+							justify-content: space-around
+							align-items: center
+							
+							h1, span
+								font-family: Aller Bold
+
+							> .pp
+								display: flex
+								flex-wrap: nowrap
+
+								> h1
+									font-size: 22px
+
+									&.hide
+										opacity: 0.4
+
+									> span
+										font-size: 15px
+							> .hr
+								width: 100px
+								background: url("/assets/img/slashRanking.png")
+								background-size: 100px
+								min-height: 1px
+								display: block
+								margin: 3px 0px
+
+							> .mods
+
+								> h1
+									font-size: 15px
+									white-space: nowrap
+
+			// FOR ANIMATION / WHEN WE SHOW UP USER //
+
+			&.show_user
+				animation: open_content_wrapper $speedOfOpeningConentWrapper ease $speedOfHidingInput forwards, going_to_top $speedOfGoingToTopContentWrapper cubic-bezier(0, 0, 0.2, 1) $delayToGoingToTopForContentWrapper forwards
+				transform: scale(1)
+
+				@keyframes open_content_wrapper
+					to
+						top: calc(50% - #{$heightForUserContentWrapperWhenItsOpen1} / 2)
+						left: calc(50% - #{$widthForUserContentWrapperWhenItsOpen} / 2)
+						width: $widthForUserContentWrapperWhenItsOpen
+						height: $heightForUserContentWrapperWhenItsOpen1
+
+				@keyframes going_to_top
+					from
+						top: calc(50% - #{$heightForUserContentWrapperWhenItsOpen1} / 2)						
+					to
+						top: $gup
+
+				> form.select_user
+					visibility: hidden
+					transition: visibility $speedOfHidingInput ease
+
+					> input
+						transform: scale(0.7)
+						opacity: 0
+						transition: transform $speedOfHidingInput ease, opacity $speedOfHidingInput ease
+
+				> .user_profile
+
+					> .personal_row
+						display: flex
+						animation: show_personal_row $speedOfOpeningConentWrapper ease $speedOfHidingInput forwards
+
+						@keyframes show_personal_row
+							to
+								transform: scale(1)
+								opacity: 1
+
+						> a.avatar
+						
+							> img
+								animation: heartbeat 5000ms linear $delayToAvatarShine infinite
+
+								@keyframes heartbeat
+									50%
+										box-shadow: 0px 0px 70px $user_content_wrapper_glowing
+
+						> .user_stuff
+
+							> .lvl_row
+							
+								>	.lvl_bar_wrapper
+
+									> .lvl_bar
+										animation: lvlSlide 500ms ease $delayToAvatarShine forwards
+										
+										@keyframes lvlSlide
+											to
+												width: 100%
+
+										> .lvl_pattern
+											animation: spark 7000ms linear 0s infinite
+
+											@keyframes spark
+												from
+													background-position: 0 0
+												to
+												 background-position: 0 -100px
+				
+				> .user_feed
+					animation: showUserFeed 200ms ease $delayToAvatarShine forwards
+
+					@keyframes showUserFeed
+						from
+							top: $topOfUserFeed + $gup
+							height: auto
+						to
+							height: auto
+							top: $topOfUserFeed
+							opacity: 1
+							visibility: visible

@@ -1,1 +1,113 @@
-<p>Gatari huiniya</p>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8"/>
+    <title>osu!watch</title>
+    <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet"/>
+    <link href="/assets/css/style.css" rel="stylesheet"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="/assets/js/logic.js"></script>
+    <script src="/assets/js/jquery.timeago.min.js"></script>
+  </head>
+  <body>
+    <div class="loading_content">
+      <div class="loader">
+        <div class="l1"></div>
+        <div class="l2"></div>
+        <div class="l3"></div>
+      </div>
+    </div>
+    <div class="overall_wrapper">
+      <div class="user_content_wrapper">
+        <div class="user_profile">
+          <div class="personal_row"><a class="avatar" target="_blank"><img/></a>
+            <div class="user_stuff">
+              <div class="username_and_ranking">
+                <div class="username"><a target="_blank"></a></div>
+                <div class="ranking">
+                  <h2 class="pp"></h2>
+                  <div class="hr"></div>
+                  <h2 class="rank"></h2>
+                </div>
+              </div>
+              <div class="detail_row">
+                <div class="acc_and_pc">
+                  <div class="acc">
+                    <h1>Accuracy:</h1>
+                    <h2></h2>
+                  </div>
+                  <div class="pc">
+                    <h1>Play count:</h1>
+                    <h2></h2>
+                  </div>
+                </div>
+                <div class="count_ranks_row">
+                  <div class="count_ranks_wrapper">
+                    <div class="cout_ss">
+                      <h1></h1>
+                      <div class="img"></div>
+                    </div>
+                    <div class="cout_s">
+                      <h1></h1>
+                      <div class="img"></div>
+                    </div>
+                    <div class="cout_a">
+                      <h1></h1>
+                      <div class="img"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="lvl_row">
+                <div class="lvl_bar_background"></div>
+                <div class="lvl_bar_wrapper">
+                  <div class="lvl_bar">
+                    <div class="lvl_pattern"></div>
+                  </div>
+                </div>
+                <div class="current_level"> 
+                  <h1>Level:</h1><span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="user_feed">
+          <div class="header">
+            <h1>Recent plays</h1>
+          </div>
+          <div class="plays_feed">
+            <h1 class="start" id="helloBuddy">Here will be your new plays... Just play some!</h1>
+          </div>
+        </div>
+        <form class="select_user" action="">
+          <h1>Write your name in <a href="https://osu.ppy.sh/" target="_blank">osu!</a></h1>
+          <input type="text" maxlength="15" id="input_username" value=""/>
+        </form>
+        <div class="error_cloud">
+          <h1></h1>
+        </div>
+      </div>
+      <div class="api_key_wrapper">
+        <h1>Paste you <a href="https://osu.ppy.sh/p/api" target="_blank">API key</a></h1>
+        <input id="input_api_key" maxlength="40" type="password"/>
+      </div>
+      <div class="support_wrapper">
+        <div class="msg_wrapper">
+          <div class="msg">
+            <header>
+              <div class="logo">
+                <div class="version">ver: 1.0.0</div>
+              </div>
+            </header>
+            <h1>Hello!</h1>
+            <h1>Thank you for using this tool, I hope you like it.</h1>
+            <h1>If you have any question, you can ask it to me in PM via <a href="https://osu.ppy.sh/u/7116996" target="_blank">my profile</a> on osu! site, but first of all please read the <a href="https://github.com/VostokSisters/osu-watch/wiki/Wiki-%D0%BD%D0%B0-%D1%80%D1%83%D1%81%D1%81%D0%BA%D0%BE%D0%BC" target="_blank" >wiki page</a> on github.</h1>
+            <h1>But if you fell in love with this project, you can <a href="https://www.paypal.me/vostoksisters/50" target="_blank">support</a> me financially, using PayPal. </h1>
+          </div>
+        </div>
+        <div class="heart"></div>
+      </div>
+    </div>
+  </body>
+</html>
