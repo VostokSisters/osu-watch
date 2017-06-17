@@ -182,7 +182,7 @@ function startWatch (user) {
 					if (scoreDateError <= scoreDateRangeError && scoreDateError >= -scoreDateRangeError) {
 						submitScorePp = score.pp;
 						xhrScoresData.forEach(function(score) {
-							if (submitScorePp < score.pp) {
+							if (Number(submitScorePp) < Number(score.pp)) {
 								fMaxScore = 0;
 								return;
 							} 
