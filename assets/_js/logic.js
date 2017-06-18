@@ -183,7 +183,6 @@ function startWatch (user) {
 			data: {k: APIkey, b: recentScoreData.beatmap_id, u: user.user_id, type: "id"},
 			success: function(xhrScoresData) {
 				console.log("Скоры из БД: ", xhrScoresData);
-				console.info("Инфа по карте из getPP(): ", xhrBeatmapData);
 				var submitScorePp = '';
 				var fMaxScore = 1;
 				xhrScoresData.forEach(function(score) {
