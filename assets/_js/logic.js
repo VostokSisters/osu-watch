@@ -168,19 +168,30 @@ function startWatch (user) {
 			PF			: 16384 // Only set along with SuddenDeath. i.e: PF only gives 16416  
 		};
 
-	function getPP ($addedScore, beatmapId, recentScoreDate) {
+	function getMods (scoreMods) {
+		let namesOfScoreMods = [];
+		for (var mod in allmods)
+			if  (scoreMods & allmods[mod]) namesOfScoreMods.push(mod);
+
+		return namesOfScoreMods.length ? namesOfScoreMods.join(" ") : "Nomod";
+	}
+
+	function getPP ($addedScore, recentScoreData, xhrBeatmapData) {
 		$.ajax({
 			url: APIuri + "get_scores",
 			type: "GET",
-			data: {k: APIkey, b: beatmapId, u: user.user_id, type: "id"},
+			data: {k: APIkey, b: recentScoreData.beatmap_id, u: user.user_id, type: "id"},
 			success: function(xhrScoresData) {
 				console.log("Скоры из БД: ", xhrScoresData);
+				console.info("Инфа по карте из getPP(): ", xhrBeatmapData);
 				var submitScorePp = '';
 				var fMaxScore = 1;
 				xhrScoresData.forEach(function(score) {
-					let scoreDateError = new Date(score.date) - new Date(recentScoreDate);
-					if (scoreDateError <= scoreDateRangeError && scoreDateError >= -scoreDateRangeError) {
+					let scoreDateError = new Date(score.date) - new Date(recentScoreData.date);
+					if ((scoreDateError <= scoreDateRangeError) && (scoreDateError >= -scoreDateRangeError)) {
 						submitScorePp = score.pp;
+						if (submitScorePp === null) 
+							return;
 						xhrScoresData.forEach(function(score) {
 							if (Number(submitScorePp) < Number(score.pp)) {
 								fMaxScore = 0;
@@ -190,24 +201,25 @@ function startWatch (user) {
 						return;
 					}
 				});
-				if (submitScorePp)
-					$addedScore.find('.pp').html(`<h1 ${fMaxScore ? '' : 'class="hide"'}>${Math.round(submitScorePp * 100) / 100}<span>pp</span></h1>`);
-				else
-					$addedScore.find('.pp').html(`<h1 class="hide">nothing</h1>`);
+
+				if (submitScorePp === null) {
+					if (Number(xhrBeatmapData.approved) > 2)
+						$addedScore.find('.pp').html(`<h1 class="hide">nothing</h1>`);
+					else {
+						console.warn("PP за поставленный скор ещё не посчитались, делаем ещё один запрос!");
+						getPP($addedScore, recentScoreData, xhrBeatmapData);
+					}
+				} else if (submitScorePp !== '')
+						$addedScore.find('.pp').html(`<h1 ${fMaxScore ? '' : 'class="hide"'}>${Math.round(submitScorePp * 100) / 100}<span>pp</span></h1>`);
+					else
+						$addedScore.find('.pp').html(`<h1 class="hide">nothing</h1>`);
+
 			},
 			error: function() {
-				getPP($addedScore, beatmapId, recentScoreDate);
+				getPP($addedScore, recentScoreData, xhrBeatmapData);
 			},
 			timeout: timeoutForRequestWhenWeTryToGetPPForRecentScore
 		});
-	}
-
-	function getMods (scoreMods) {
-		let namesOfScoreMods = [];
-		for (var mod in allmods)
-			if  (scoreMods & allmods[mod]) namesOfScoreMods.push(mod);
-
-		return namesOfScoreMods.length ? namesOfScoreMods.join(" ") : "Nomod";
 	}
 
 	function addNewScore (recentScoreData) {
@@ -274,7 +286,7 @@ function startWatch (user) {
 					scrollControl();
 				});
 				if (recentScoreData.rank !== "F")
-					getPP($addedScore, recentScoreData.beatmap_id, recentScoreData.date);
+					getPP($addedScore, recentScoreData, xhrBeatmapData);
 			},
 			error: function() { //jqXHR
 				addNewScore(recentScoreData);
