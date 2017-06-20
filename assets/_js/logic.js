@@ -27,6 +27,9 @@ var
 	
 	$api_key_wrapper,
 	$api_key_wrapper_input,
+
+	$toggler,
+	isTogglerSorted = false,
 	
 	holdUpInput = 0,
 	mainWidth = 438,
@@ -176,7 +179,7 @@ function startWatch (user) {
 		return namesOfScoreMods.length ? namesOfScoreMods.join(" ") : "Nomod";
 	}
 
-	function getPP ($addedScore, recentScoreData, xhrBeatmapData) {
+	function getPP ($addedScore, recentScoreData) {
 		$.ajax({
 			url: APIuri + "get_scores",
 			type: "GET",
@@ -188,11 +191,11 @@ function startWatch (user) {
 				xhrScoresData.forEach(function(score) {
 					let scoreDateError = new Date(score.date) - new Date(recentScoreData.date);
 					if ((scoreDateError <= scoreDateRangeError) && (scoreDateError >= -scoreDateRangeError)) {
-						submitScorePp = score.pp;
+						submitScorePp = score.pp ? Number(score.pp) : null;
 						if (submitScorePp === null) 
 							return;
 						xhrScoresData.forEach(function(score) {
-							if (Number(submitScorePp) < Number(score.pp)) {
+							if (submitScorePp < Number(score.pp)) {
 								fMaxScore = 0;
 								return;
 							} 
@@ -202,20 +205,39 @@ function startWatch (user) {
 				});
 
 				if (submitScorePp === null) {
-					if (Number(xhrBeatmapData.approved) > 2)
-						$addedScore.find('.pp').html(`<h1 class="hide">nothing</h1>`);
-					else {
-						console.warn("PP за поставленный скор ещё не посчитались, делаем ещё один запрос!");
-						getPP($addedScore, recentScoreData, xhrBeatmapData);
+					console.warn("PP за поставленный скор ещё не посчитались, делаем ещё один запрос!");
+					getPP($addedScore, recentScoreData);
+					return;
+				} else if (submitScorePp === '') {
+					$addedScore.find('.pp').html(`<h1 class="hide">nothing</h1>`);
+					$addedScore.addClass('nothing_get');
+					if (!isTogglerSorted) {
+						$addedScore.addClass('show').next('.hr').show();
+						scrollControl();
 					}
-				} else if (submitScorePp !== '')
-						$addedScore.find('.pp').html(`<h1 ${fMaxScore ? '' : 'class="hide"'}>${Math.round(submitScorePp * 100) / 100}<span>pp</span></h1>`);
-					else
-						$addedScore.find('.pp').html(`<h1 class="hide">nothing</h1>`);
+					isFilterResultEmpty();
+				}
+				else {
+					$addedScore.find('.pp').html(`<h1 ${fMaxScore ? '' : 'class="hide"'}>${Math.round(submitScorePp * 100) / 100}<span>pp</span></h1>`);
+					if (!fMaxScore)
+						$addedScore.addClass('nothing_get');
+					if (isTogglerSorted) {
+						if (fMaxScore) {
+							$addedScore.addClass('show');
+							if (!$('.plays_feed > .play_record:not(.nothing_get):last').is($addedScore)) 
+								$addedScore.next('.hr').show();
+							scrollControl();
+						}
+					} else {
+						$addedScore.addClass('show').next('.hr').show();
+						scrollControl();
+					}
+					isFilterResultEmpty();
+				}
 
 			},
 			error: function() {
-				getPP($addedScore, recentScoreData, xhrBeatmapData);
+				getPP($addedScore, recentScoreData);
 			},
 			timeout: timeoutForRequestWhenWeTryToGetPPForRecentScore
 		});
@@ -277,15 +299,32 @@ function startWatch (user) {
 				let $addedScore = $(`.play_record[recordid="${countOfAddedRecords}"]`);
 				$addedScore.find('time').timeago();
 				$addedScore.find('.mapset_avatar img').one('load', function() {
-					$addedScore.css('display', 'flex');
-					if (countOfAddedRecords === 1)
+					if (countOfAddedRecords === 1) {
 						$('#helloBuddy').hide();
+						$toggler.show();
+					}
+					else {
+						$('<div class="hr" style="display: none;"></div>').insertAfter($addedScore);
+						if (!isTogglerSorted)
+							$addedScore.next('.hr').show();
+					}
+					
+					if (!isTogglerSorted) {
+						$addedScore.addClass('show');
+						scrollControl();
+					}
+
+					if (recentScoreData.rank == "F" || Number(xhrBeatmapData.approved) > 2) {
+						$addedScore.find('.pp').html(`<h1 class="hide">nothing</h1>`);
+						$addedScore.addClass('nothing_get');
+					}
 					else
-						$('<div class="hr"><div>').insertAfter($addedScore);
-					scrollControl();
-				});
-				if (recentScoreData.rank !== "F")
-					getPP($addedScore, recentScoreData, xhrBeatmapData);
+						getPP($addedScore, recentScoreData);
+
+					isFilterResultEmpty();
+
+				}); // загружена аватарка карты
+
 			},
 			error: function() { //jqXHR
 				addNewScore(recentScoreData);
@@ -334,7 +373,7 @@ function startWatch (user) {
 
 	getUserRecent();
 
-}
+} // startWatch
 
 function setupUser(userId) {
 	$input_username.val(userId);
@@ -345,6 +384,31 @@ function setupUser(userId) {
 	}
 	checkUsername(userId);
 }
+
+
+function isFilterResultEmpty() {
+	if ($('.plays_feed > .play_record:visible').length === 0)
+		$('#emptyFilter').addClass('show');
+	else
+		$('#emptyFilter').removeClass('show');
+}
+
+function toggleFails () {
+	$toggler.toggleClass('sort_enabled');
+	isTogglerSorted = !isTogglerSorted;
+
+	if (isTogglerSorted) {
+		$('.plays_feed > .play_record.nothing_get').removeClass('show').next('.hr').hide();
+		$('.plays_feed > .play_record:not(.nothing_get):last').next('.hr').hide();
+	} else {
+		$('.plays_feed > .play_record').addClass('show').next('.hr').show();
+	}
+
+	isFilterResultEmpty();
+
+	scrollControl();
+}
+
 
 $(function() {
 
@@ -374,6 +438,8 @@ $(function() {
 
 	$user_feed = $('.user_feed');
 	$plays_feed = $('.user_feed .plays_feed');
+
+	$toggler = $('.toggle_fails');
 
 	$form_select_user.submit(function(event) { // Сабмит на форме 
     event.preventDefault();
@@ -411,6 +477,8 @@ $(function() {
 			$input_username.focus();
 		});
 	}); // Паста в поле ввода API key 
+
+	$toggler.click(toggleFails);
 
 });
 

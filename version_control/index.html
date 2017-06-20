@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en"></html>
+<head>
+  <meta charset="UTF-8"/>
+  <title>osu!watch - version_control.txt</title>
+  <link href="/assets/css/style_version_control.css" rel="stylesheet"/>
+</head>
+<body>
+  <header><a href="/"><span class="osu">osu!</span><span>watch</span></a><span class="txt">version_control.txt</span></header>
+  <main>
+    <div class="post">
+      <header>
+        <div class="version">Version: 1.0.3</div>
+        <div class="date">21.06.2017</div>
+      </header>
+      <div class="post-body">
+        <div class="rec">
+          <div class="fix">FIX</div>
+          <div class="text">
+            Сделан рефакторинг кода, в следсвии которого снижено количество запросов на север, связанное с количеством полученных пп за плей. Если карта ранкнута и квалифаенд, то тогда нас интересуют пп. Иначе (также это касается фейлов) - выводится nothing. 
+            
+          </div>
+        </div>
+        <div class="rec">
+          <div class="add exp">ADD</div>
+          <div class="text">
+            Добавлен фильтр для скоров. Теперь можно отфильтровать скоры от тех, что не принесли вам пп. 
+            Сам фильтр появляется, как только был добавлен хотя бы один результат о каком-то плее, будь то фейл или скор, принесший пп.
+            К тому же можно включить фильтр и играть дальше - тогда при добавлении нового скора, он будет добавлен к отоброжению лишь тогда, когда будет ясно, что он принес пп. 
+            Функция экспериментальная и была сложна в реализации, прошу сообщать обо всех некорректностях в работе. 
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="post">
+      <header>
+        <div class="version">Version: 1.0.2</div>
+        <div class="date">18.06.2017</div>
+      </header>
+      <div class="post-body">
+        <div class="rec">
+          <div class="fix">FIX</div>
+          <div class="text">
+            Исправил ошибку, которая могла иногда возникать, если сервер считал пп за плей достаточно долго, а запрос, который берет эту информацию, её не получил (в ответе был получен null в графе о пп, хотя как известно, за ранкнутую или квалифаендную карту пп должны быть).
+            В таком случае делаются повторные запросы до тех пор, пока сервер игры не посчитает пп и мы их не получим в запросе.
+            (Ppy fix you shit)
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="post">
+      <header>
+        <div class="version">Version: 1.0.1</div>
+        <div class="date">17.06.2017</div>
+      </header>
+      <div class="post-body">
+        <div class="rec">
+          <div class="fix">FIX</div>
+          <div class="text">
+            Исправил приведение числовых типов данных, получаемых с сервера, где это только возможно.
+            Теперь ошибок в сравнениях различной информации и, как следствие, некорректная работа некоторых ключевых условий, стало равно чуть меньше, чем нулю.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
