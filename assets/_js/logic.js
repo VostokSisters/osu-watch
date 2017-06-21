@@ -424,7 +424,7 @@ $(function() {
 	$input_username_h1 = $input_username.siblings('h1');
 
 	$user_profile_avatar = $('.user_profile a.avatar');
-	$user_profile_avatar_img = $('.user_profile a.avatar img');
+	$user_profile_avatar_img = $('.user_profile a.avatar .avatar_wrapper img');
 	$user_profile_username = $('.user_profile .user_stuff .username_and_ranking .username a');
 	$user_profile_ranking_pp = $('.user_profile .user_stuff .username_and_ranking .ranking h2.pp');
 	$user_profile_ranking_rank = $('.user_profile .user_stuff .username_and_ranking .ranking h2.rank');

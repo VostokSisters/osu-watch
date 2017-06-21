@@ -519,6 +519,8 @@ body
 						position: relative
 						min-width: $avatarSize
 						min-height: $avatarSize
+						width: $avatarSize
+						height: $avatarSize
 						justify-content: center
 						align-items: center
 						box-sizing: border-box
@@ -543,16 +545,26 @@ body
 							border: none
 							text-decoration: none 
 							border: none
+							
+						> .avatar_wrapper
 
-						> img
-							display: inline-block
-							max-width: $avatarSize
-							max-height: $avatarSize
-							box-sizing: border-box
-							image-rendering: auto
-							vertical-align: top
-							border-radius: 4px
-							border: $borderContent+2 solid $borderAvatarColor
+							&::before
+								position: absolute
+								content: ''
+								width: 100%
+								height: 100%
+
+							> img
+								position: relative
+								display: inline-block
+								max-width: $avatarSize
+								max-height: $avatarSize
+								box-sizing: border-box
+								image-rendering: auto
+								vertical-align: top
+								border-radius: 4px
+								border: $borderContent+2 solid $borderAvatarColor
+
 
 					> .user_stuff
 						display: flex
@@ -1178,7 +1190,7 @@ body
 
 						> a.avatar
 						
-							> img
+							> .avatar_wrapper
 								animation: heartbeat 5000ms linear $delayToAvatarShine infinite
 
 								@keyframes heartbeat
