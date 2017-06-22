@@ -173,8 +173,12 @@ function startWatch (user) {
 
 	function getMods (scoreMods) {
 		let namesOfScoreMods = [];
+		console.log(scoreMods);
 		for (var mod in allmods)
 			if  (scoreMods & allmods[mod]) namesOfScoreMods.push(mod);
+
+		if (~namesOfScoreMods.indexOf('DT') && ~namesOfScoreMods.indexOf('NC'))
+			namesOfScoreMods.splice(namesOfScoreMods.indexOf('DT'), 1);
 
 		return namesOfScoreMods.length ? namesOfScoreMods.join(" ") : "Nomod";
 	}
