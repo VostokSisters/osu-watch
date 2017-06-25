@@ -173,7 +173,6 @@ function startWatch (user) {
 
 	function getMods (scoreMods) {
 		let namesOfScoreMods = [];
-		console.log(scoreMods);
 		for (var mod in allmods)
 			if  (scoreMods & allmods[mod]) namesOfScoreMods.push(mod);
 
@@ -486,17 +485,21 @@ $(function() {
 
 });
 
-window.onload = $(function () {
+$(window).on('load', function () {
 	// if (currentState ? currentState.pushed : false) history.pushState("", "", "/");
 
 	$('.loading_content').css('display', 'none');
 	$('.overall_wrapper').css('display', 'block');
-	$user_content_wrapper.addClass('zoom_in_content_wrapper');
+	$('.user_content_wrapper').addClass('zoom_in_content_wrapper');
 
 	if (APIkey === null)
-		$api_key_wrapper.addClass('without_key');
+		$('.api_key_wrapper').addClass('without_key');
 
 	// Обработчики на анимацию по фокусу для input_username
+	let
+		$input_username = $('#input_username'),
+		$input_username_h1 = $input_username.siblings('h1');
+
 	$input_username.focus();
 
 	$input_username.focusin(function() {
