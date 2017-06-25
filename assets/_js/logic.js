@@ -379,13 +379,15 @@ function startWatch (user) {
 } // startWatch
 
 function setupUser(userId) {
-	$input_username.val(userId);
-	if (APIkey === null) {
-		showError(6);
-		$api_key_wrapper_input.focus();
-		return;
-	}
-	checkUsername(userId);
+	$(function() {
+		$input_username.val(userId);
+		if (APIkey === null) {
+			showError(6);
+			$api_key_wrapper_input.focus();
+			return;
+		}
+		checkUsername(userId);
+	});
 }
 
 
@@ -516,6 +518,7 @@ $(window).on('load', function () {
 	// то делаем пресет его профиля
 	let userId = window.location.href.match(/id=(\d+)/);
 	userId = userId ? userId[1] : 0;
+	console.log(userId);
 	if (userId) setupUser(userId);
 });
 
