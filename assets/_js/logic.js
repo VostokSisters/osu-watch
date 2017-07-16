@@ -1,4 +1,5 @@
 (() => {
+"use strict";
 var 
 	animationEnd = 'webkitAnimationEnd oanimationend msAnimationEnd animationend',
 
@@ -34,12 +35,15 @@ var
 	holdUpInput = 0,
 	mainWidth = 438,
 
-	timeoutForRequestWhenWeTryToGetUserProfile = 10000,
+	timeoutForRequestWhenWeTryToGetUserProfile = 3000,
 	timeoutForRequestWhenWeTryToGetUserRecentPlay = 5000,
 	timeoutForRequestWhenWeTryToGetBeatmapInformation = 5000,
 	timeoutForRequestWhenWeTryToGetPPForRecentScore = 5000,
+	timeForNewRequestForPPByRecentScore = 1000,
+	timeForUpdateProfileAfterNewRecentScore = 5000,
+	timeoutForUpdateProfileAfterNewRecentScore = 5000,
 
-	scoreDateRangeError = 5000,
+	scoreDateRangeError = 5000, // in ms
 	
 	APIkey = localStorage.getItem('APIkey'), 
 	APIuri = "https://osu.ppy.sh/api/";
@@ -81,7 +85,7 @@ function scrollControl () {
 }
 
 function countRanking (number) {
-	return number > 999 ? (Math.floor(number / 100) / 10)  + 'k': number;
+	return Number(number) > 999 ? (Math.floor(number / 100) / 10)  + 'k': number;
 }
 
 function checkUsername (username) {
@@ -149,8 +153,10 @@ function showUser (user) { // Показываем поцана
 function startWatch (user) {
 	var 
 		userInitalState = user,
+		latestProfileState = user,
 		userRecentestScore = {},
 		countOfAddedRecords = 0,
+		isUpdatingProfileNow = false,
 
 		allmods =
 		{
@@ -182,13 +188,112 @@ function startWatch (user) {
 		return namesOfScoreMods.length ? namesOfScoreMods.join(" ") : "Nomod";
 	}
 
+	function updateProfile () {
+		isUpdatingProfileNow = true;
+		$.ajax({
+			url: APIuri + "get_user",
+			type: "GET",
+			data: {k: APIkey, u: user.user_id, event_days: '1'},
+			success: function(xhrUserProfile) {
+				let skippedProperties = ['count50', 'count100', 'count300', 'country', 'events', 'ranked_score', 'total_score', 'user_id', 'username'];
+				let colorUp = "0px 0px 4px black, 0px 0px 6px lightgreen, 0px 0px 10px lightgreen";
+				let colorDown = "0px 0px 4px black, 0px 0px 6px red, 0px 0px 10px red";
+				xhrUserProfile = xhrUserProfile[0];
+
+				for (let property in xhrUserProfile) {
+					if (skippedProperties.indexOf(property) !== -1) continue;
+					if (latestProfileState[property] !== xhrUserProfile[property]) {
+						switch (property) {
+							case 'playcount' :
+								console.log('playcount изменился!');
+								$user_profile_pc.text(xhrUserProfile.playcount);
+								$user_profile_pc.css('text-shadow', colorUp);
+								break;
+							case 'accuracy' :
+								console.log('accuracy изменился!');
+								$user_profile_acc.text((Math.round(xhrUserProfile.accuracy * 100) / 100) + '%');
+								if (xhrUserProfile.accuracy !== userInitalState.accuracy)
+									$user_profile_acc.css('text-shadow', Number(xhrUserProfile.accuracy) > Number(userInitalState.accuracy) ? colorUp : colorDown);
+								else
+									$user_profile_acc.css('text-shadow', '');
+								break;
+							case 'count_rank_a' :
+								console.log('count_rank_a изменился!');
+								$user_profile_ranking_A_count.text(xhrUserProfile.count_rank_a ? countRanking(xhrUserProfile.count_rank_a) : 0);
+								if (xhrUserProfile.count_rank_a !== userInitalState.count_rank_a)
+									$user_profile_ranking_A_count.css('text-shadow', Number(xhrUserProfile.count_rank_a) > Number(userInitalState.count_rank_a) ? colorUp : colorDown);
+								else
+									$user_profile_ranking_A_count.css('text-shadow', '');
+								break;
+							case 'count_rank_s' :
+								console.log('count_rank_s изменился!');
+								$user_profile_ranking_S_count.text(xhrUserProfile.count_rank_s ? countRanking(xhrUserProfile.count_rank_s) : 0);
+								if (xhrUserProfile.count_rank_s !== userInitalState.count_rank_s)
+									$user_profile_ranking_S_count.css('text-shadow', Number(xhrUserProfile.count_rank_s) > Number(userInitalState.count_rank_s) ? colorUp : colorDown);
+								else
+									$user_profile_ranking_S_count.css('text-shadow', '');
+								break;
+							case 'count_rank_ss' :
+								console.log('count_rank_ss изменился!');
+								$user_profile_ranking_SS_count.text(xhrUserProfile.count_rank_ss ? countRanking(xhrUserProfile.count_rank_ss) : 0);
+								if (xhrUserProfile.count_rank_ss !== userInitalState.count_rank_ss)
+									$user_profile_ranking_SS_count.css('text-shadow', Number(xhrUserProfile.count_rank_ss) > Number(userInitalState.count_rank_ss) ? colorUp : colorDown);
+								else
+									$user_profile_ranking_SS_count.css('text-shadow', '');
+								break;
+							case 'pp_raw' :
+								console.log('pp_raw изменился!');
+								$user_profile_ranking_pp.html(Math.round(xhrUserProfile.pp_raw) + '<span>pp</span>');
+								if (xhrUserProfile.pp_raw !== userInitalState.pp_raw)
+									$user_profile_ranking_pp.css('text-shadow', Number(xhrUserProfile.pp_raw) > Number(userInitalState.pp_raw) ? colorUp : colorDown);
+								else
+									$user_profile_ranking_pp.css('text-shadow', '');
+								break;
+							case 'pp_rank' :
+								console.log('pp_rank изменился!');
+								$user_profile_ranking_rank.text('#' + xhrUserProfile.pp_rank);
+								if (xhrUserProfile.pp_rank !== userInitalState.pp_rank)
+									$user_profile_ranking_rank.css('text-shadow', Number(xhrUserProfile.pp_rank) > Number(userInitalState.pp_rank) ? colorDown : colorUp);
+								else
+									$user_profile_ranking_rank.css('text-shadow', '');
+								break;
+							case 'level' :
+								console.log('level изменился!');
+								$user_profile_lvl_row_wrapper.css('width', (xhrUserProfile.level && xhrUserProfile.level.replace(/\d+\.?/,'') ? xhrUserProfile.level.replace(/\d+\.?/,'') : '0').match(/\d{0,2}/)[0] * mainWidth / 100);
+								$user_profile_lvl_current_level.text(" " + xhrUserProfile.level.replace(/\.\d+/, ''));
+								if (xhrUserProfile.level !== userInitalState.level)
+									$user_profile_lvl_current_level.css('text-shadow', Number(xhrUserProfile.level) > Number(userInitalState.level) ? colorUp : colorDown);
+								else
+									$user_profile_lvl_current_level.css('text-shadow', '');
+								break;
+							// case 'pp_country_rank' :
+							// 	break;
+							default :
+								console.log('свойство пропущено: ', property);
+								continue;
+						}
+					}
+
+				} // сравниваем все свойства
+				isUpdatingProfileNow = false;
+				latestProfileState = xhrUserProfile;
+			},
+			error: function(jqXHR) {
+				if (jqXHR.statusText == 'timeout') {
+					updateProfile();
+					return;
+				}
+			},
+			timeout: timeoutForUpdateProfileAfterNewRecentScore
+		});
+	}
+
 	function getPP ($addedScore, recentScoreData) {
 		$.ajax({
 			url: APIuri + "get_scores",
 			type: "GET",
 			data: {k: APIkey, b: recentScoreData.beatmap_id, u: user.user_id, type: "id"},
 			success: function(xhrScoresData) {
-				console.log("Скоры из БД: ", xhrScoresData);
 				var submitScorePp = '';
 				var fMaxScore = 1;
 				xhrScoresData.forEach(function(score) {
@@ -209,7 +314,7 @@ function startWatch (user) {
 
 				if (submitScorePp === null) {
 					console.warn("PP за поставленный скор ещё не посчитались, делаем ещё один запрос!");
-					getPP($addedScore, recentScoreData);
+					setTimeout(() => {getPP($addedScore, recentScoreData);} , timeForNewRequestForPPByRecentScore);
 					return;
 				} else if (submitScorePp === '') {
 					$addedScore.find('.pp').html(`<h1 class="hide">nothing</h1>`);
@@ -238,6 +343,8 @@ function startWatch (user) {
 					isFilterResultEmpty();
 				}
 
+				console.log("Скоры из БД: ", xhrScoresData);
+				console.groupEnd();
 			},
 			error: function() {
 				getPP($addedScore, recentScoreData);
@@ -320,6 +427,7 @@ function startWatch (user) {
 					if (recentScoreData.rank == "F" || Number(xhrBeatmapData.approved) > 2) {
 						$addedScore.find('.pp').html(`<h1 class="hide">nothing</h1>`);
 						$addedScore.addClass('nothing_get');
+						console.groupEnd();
 					}
 					else
 						getPP($addedScore, recentScoreData);
@@ -352,9 +460,11 @@ function startWatch (user) {
 
 					if (userRecentestScore.date !== xhrRecentScore.date) {
 						userRecentestScore = xhrRecentScore;
-						console.log("Новый скор: ", userRecentestScore);
+						console.groupCollapsed('Новый плей (' + userRecentestScore.date + ')');
+						console.info("Информация по плею: ", userRecentestScore);
 						addNewScore(userRecentestScore);
-						// return;
+						if (!isUpdatingProfileNow) 
+							setTimeout(updateProfile, timeForUpdateProfileAfterNewRecentScore);
 					}
 				}
 
@@ -518,7 +628,6 @@ $(window).on('load', function () {
 	// то делаем пресет его профиля
 	let userId = window.location.href.match(/id=(\d+)/);
 	userId = userId ? userId[1] : 0;
-	console.log(userId);
 	if (userId) setupUser(userId);
 });
 

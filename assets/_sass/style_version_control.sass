@@ -115,12 +115,20 @@ body
 						cursor: default
 						display: inline-block
 						color: green
+						white-space: nowrap
 
 					> div.exp::after
 						position: absolute
 						left: calc(100% + 10px)
 						content: 'experemental!'
 						color: red
+						font-style: italic
+
+					> div.exp-clear::after
+						position: absolute
+						left: calc(100% + 10px)
+						content: 'experemental - clear!'
+						color: green
 						font-style: italic
 
 					> .fix
