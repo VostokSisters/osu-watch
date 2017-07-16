@@ -35,6 +35,8 @@ $delayToAvatarShine: $delayToGoingToTopForContentWrapper + $speedOfGoingToTopCon
 $widthForUserContentWrapperWhenItsOpen: 600px
 $heightForUserContentWrapperWhenItsOpen1: 150px
 
+$transitionShowChangesProfileUpdate: text-shadow 100ms cubic-bezier(0, 1.70, 0.2, 2.3)
+
 // ______________ STATIC ______________ //
 
 $borderContent: 1px
@@ -637,6 +639,7 @@ body
 									margin: 0
 									padding: 0
 									color: white
+									transition: $transitionShowChangesProfileUpdate
 									font:
 										family: Aller Bold
 
@@ -649,6 +652,7 @@ body
 
 								>	h2.rank
 									font-size: 14px
+									transition: $transitionShowChangesProfileUpdate
 
 								>	.hr
 									width: 128px
@@ -674,25 +678,26 @@ body
 								> div
 									display: flex
 								
-								h1, h2
-									margin: 0
-									padding: 0
-									white-space: nowrap
-									font: 
-										family: Aller Bold
-										size: 20px
+									> h1, h2
+										margin: 0
+										padding: 0
+										white-space: nowrap
+										font: 
+											family: Aller Bold
+											size: 20px
 
-								h1
-									width: 110px
-
-								h2
-
-								>	.acc
 									> h1
-									>	h2
-								>	.pc
-									> h1
-									>	h2
+										width: 110px
+
+									> h2
+										transition: $transitionShowChangesProfileUpdate
+
+									>	.acc
+										> h1
+										>	h2
+									>	.pc
+										> h1
+										>	h2
 									
 							>	.count_ranks_row
 								width: 100%
@@ -718,6 +723,7 @@ body
 										> h1
 											margin: 0px 4px
 											padding: 0
+											transition: $transitionShowChangesProfileUpdate
 											font:
 												family: Aller Bold
 												size: 20px
@@ -823,6 +829,9 @@ body
 
 								> h1
 									margin-right: 6px
+									
+								> span
+									transition: $transitionShowChangesProfileUpdate
 
 			> .user_feed
 				visibility: hidden
