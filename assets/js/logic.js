@@ -71,7 +71,7 @@
         }), f.attr("src", "https://a.ppy.sh/" + t.user_id), h.attr("href", "https://osu.ppy.sh/u/" + t.user_id), 
         m.attr("href", "https://osu.ppy.sh/u/" + t.user_id), m.text(t.username), k.html(Math.round(t.pp_raw) + "<span>pp</span>"), 
         v.text("#" + (t.pp_rank ? t.pp_rank : "inactive")), w.text(Math.round(100 * t.accuracy) / 100 + "%"), 
-        g.text(t.playcount ? t.playcount : "0"), b.text(t.count_rank_ss ? s(t.count_rank_ss) : 0), 
+        b.text(t.playcount ? t.playcount : "0"), g.text(t.count_rank_ss ? s(t.count_rank_ss) : 0), 
         y.text(t.count_rank_s ? s(t.count_rank_s) : 0), x.text(t.count_rank_a ? s(t.count_rank_a) : 0), 
         C.css("width", (t.level && t.level.replace(/\d+\.?/, "") ? t.level.replace(/\d+\.?/, "") : "0").match(/\d{0,2}/)[0] * j / 100), 
         N.text(" " + (t.level ? t.level.replace(/\.\d+/, "") : "0"));
@@ -96,45 +96,40 @@
                     t = t[0];
                     for (var r in t) if (-1 === e.indexOf(r) && l[r] !== t[r]) switch (r) {
                       case "playcount":
-                        console.log("playcount изменился!"), g.text(t.playcount), g.css("text-shadow", a);
+                        b.text(t.playcount), b.css("text-shadow", a);
                         break;
 
                       case "accuracy":
-                        console.log("accuracy изменился!"), w.text(Math.round(100 * t.accuracy) / 100 + "%"), 
-                        t.accuracy !== i.accuracy ? w.css("text-shadow", Number(t.accuracy) > Number(i.accuracy) ? a : n) : w.css("text-shadow", "");
+                        w.text(Math.round(100 * t.accuracy) / 100 + "%"), t.accuracy !== i.accuracy ? w.css("text-shadow", Number(t.accuracy) > Number(i.accuracy) ? a : n) : w.css("text-shadow", "");
                         break;
 
                       case "count_rank_a":
-                        console.log("count_rank_a изменился!"), x.text(t.count_rank_a ? s(t.count_rank_a) : 0), 
-                        t.count_rank_a !== i.count_rank_a ? x.css("text-shadow", Number(t.count_rank_a) > Number(i.count_rank_a) ? a : n) : x.css("text-shadow", "");
+                        x.text(t.count_rank_a ? s(t.count_rank_a) : 0), t.count_rank_a !== i.count_rank_a ? x.css("text-shadow", Number(t.count_rank_a) > Number(i.count_rank_a) ? a : n) : x.css("text-shadow", "");
                         break;
 
                       case "count_rank_s":
-                        console.log("count_rank_s изменился!"), y.text(t.count_rank_s ? s(t.count_rank_s) : 0), 
-                        t.count_rank_s !== i.count_rank_s ? y.css("text-shadow", Number(t.count_rank_s) > Number(i.count_rank_s) ? a : n) : y.css("text-shadow", "");
+                        y.text(t.count_rank_s ? s(t.count_rank_s) : 0), t.count_rank_s !== i.count_rank_s ? y.css("text-shadow", Number(t.count_rank_s) > Number(i.count_rank_s) ? a : n) : y.css("text-shadow", "");
                         break;
 
                       case "count_rank_ss":
-                        console.log("count_rank_ss изменился!"), b.text(t.count_rank_ss ? s(t.count_rank_ss) : 0), 
-                        t.count_rank_ss !== i.count_rank_ss ? b.css("text-shadow", Number(t.count_rank_ss) > Number(i.count_rank_ss) ? a : n) : b.css("text-shadow", "");
+                        g.text(t.count_rank_ss ? s(t.count_rank_ss) : 0), t.count_rank_ss !== i.count_rank_ss ? g.css("text-shadow", Number(t.count_rank_ss) > Number(i.count_rank_ss) ? a : n) : g.css("text-shadow", "");
                         break;
 
                       case "pp_raw":
-                        console.log("pp_raw изменился!"), k.html(Math.round(t.pp_raw) + "<span>pp</span>"), 
-                        t.pp_raw !== i.pp_raw ? k.css("text-shadow", Number(t.pp_raw) > Number(i.pp_raw) ? a : n) : k.css("text-shadow", "");
+                        k.html(Math.round(t.pp_raw) + "<span>pp</span>"), t.pp_raw !== i.pp_raw ? k.css("text-shadow", Number(t.pp_raw) > Number(i.pp_raw) ? a : n) : k.css("text-shadow", "");
                         break;
 
                       case "pp_rank":
-                        console.log("pp_rank изменился!"), v.text("#" + t.pp_rank), t.pp_rank !== i.pp_rank ? v.css("text-shadow", Number(t.pp_rank) > Number(i.pp_rank) ? n : a) : v.css("text-shadow", "");
+                        v.text("#" + t.pp_rank), t.pp_rank !== i.pp_rank ? v.css("text-shadow", Number(t.pp_rank) > Number(i.pp_rank) ? n : a) : v.css("text-shadow", "");
                         break;
 
                       case "level":
-                        console.log("level изменился!"), C.css("width", (t.level && t.level.replace(/\d+\.?/, "") ? t.level.replace(/\d+\.?/, "") : "0").match(/\d{0,2}/)[0] * j / 100), 
+                        C.css("width", (t.level && t.level.replace(/\d+\.?/, "") ? t.level.replace(/\d+\.?/, "") : "0").match(/\d{0,2}/)[0] * j / 100), 
                         N.text(" " + t.level.replace(/\.\d+/, "")), t.level !== i.level ? N.css("text-shadow", Number(t.level) > Number(i.level) ? a : n) : N.css("text-shadow", "");
                         break;
 
                       default:
-                        console.log("свойство пропущено: ", r);
+                        console.warn("Cвойство пропущено: ", r);
                         continue;
                     }
                     _ = !1, l = t;
@@ -268,14 +263,14 @@
         $(".plays_feed > .play_record:not(.nothing_get):last").next(".hr").hide()) : $(".plays_feed > .play_record").addClass("show").next(".hr").show(), 
         c(), e();
     }
-    var i, l, p, d, _, h, f, m, k, v, w, g, b, y, x, N, C, T, E, I, A, O, P = "webkitAnimationEnd oanimationend msAnimationEnd animationend", S = !1, D = 0, j = 438, F = 3e3, M = 5e3, G = 5e3, H = 5e3, z = 1e3, L = 5e3, R = 5e3, U = 5e3, q = localStorage.getItem("APIkey"), B = "https://osu.ppy.sh/api/";
+    var i, l, p, d, _, h, f, m, k, v, w, b, g, y, x, N, C, T, E, I, A, O, P = "webkitAnimationEnd oanimationend msAnimationEnd animationend", S = !1, D = 0, j = 438, F = 3e3, M = 5e3, G = 5e3, H = 5e3, z = 1e3, L = 5e3, R = 5e3, U = 5e3, q = localStorage.getItem("APIkey"), B = "https://osu.ppy.sh/api/";
     $(function() {
         i = $(".user_content_wrapper"), I = $(".api_key_wrapper"), A = $(".api_key_wrapper > input"), 
         l = $(".user_profile"), p = $("form.select_user"), d = $("#input_username"), _ = d.siblings("h1"), 
         h = $(".user_profile a.avatar"), f = $(".user_profile a.avatar .avatar_wrapper img"), 
         m = $(".user_profile .user_stuff .username_and_ranking .username a"), k = $(".user_profile .user_stuff .username_and_ranking .ranking h2.pp"), 
         v = $(".user_profile .user_stuff .username_and_ranking .ranking h2.rank"), w = $(".user_profile .user_stuff .detail_row .acc_and_pc .acc h2"), 
-        g = $(".user_profile .user_stuff .detail_row .acc_and_pc .pc h2"), b = $(".user_profile .user_stuff .detail_row .count_ranks_row .count_ranks_wrapper .cout_ss h1"), 
+        b = $(".user_profile .user_stuff .detail_row .acc_and_pc .pc h2"), g = $(".user_profile .user_stuff .detail_row .count_ranks_row .count_ranks_wrapper .cout_ss h1"), 
         y = $(".user_profile .user_stuff .detail_row .count_ranks_row .count_ranks_wrapper .cout_s h1"), 
         x = $(".user_profile .user_stuff .detail_row .count_ranks_row .count_ranks_wrapper .cout_a h1"), 
         N = $(".user_profile .user_stuff .lvl_row .current_level span"), C = $(".user_profile .user_stuff .lvl_row .lvl_bar_wrapper"), 
