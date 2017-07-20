@@ -3,7 +3,7 @@
   src: url("/assets/fonts/Aller_Bold.ttf"); }
 
 html {
-  min-width: 640px;
+  min-width: 700px;
   height: 100%; }
 
 body {
@@ -591,14 +591,9 @@ body {
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
-            user-select: none; }
-            body > .overall_wrapper > .user_content_wrapper > .user_profile > .personal_row > a.avatar::after {
-              position: absolute;
-              content: '';
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%; }
+            user-select: none;
+            background-color: white;
+            border-radius: 4px; }
             body > .overall_wrapper > .user_content_wrapper > .user_profile > .personal_row > a.avatar:focus {
               outline: none;
               border: none;
@@ -612,6 +607,15 @@ body {
             body > .overall_wrapper > .user_content_wrapper > .user_profile > .personal_row > a.avatar > .avatar_wrapper::before {
               position: absolute;
               content: '';
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%; }
+            body > .overall_wrapper > .user_content_wrapper > .user_profile > .personal_row > a.avatar > .avatar_wrapper::after {
+              position: absolute;
+              content: '';
+              top: 0;
+              left: 0;
               width: 100%;
               height: 100%; }
             body > .overall_wrapper > .user_content_wrapper > .user_profile > .personal_row > a.avatar > .avatar_wrapper > img {
@@ -782,7 +786,8 @@ body {
                   display: -webkit-box;
                   display: -webkit-flex;
                   display: -ms-flexbox;
-                  display: flex; }
+                  display: flex;
+                  position: relative; }
                   body > .overall_wrapper > .user_content_wrapper > .user_profile > .personal_row > .user_stuff > .detail_row > .acc_and_pc > div > h1, body > .overall_wrapper > .user_content_wrapper > .user_profile > .personal_row > .user_stuff > .detail_row > .acc_and_pc > div h2 {
                     margin: 0;
                     padding: 0;
@@ -819,6 +824,7 @@ body {
                   -ms-flex-pack: distribute;
                   justify-content: space-around; }
                   body > .overall_wrapper > .user_content_wrapper > .user_profile > .personal_row > .user_stuff > .detail_row > .count_ranks_row > .count_ranks_wrapper > div {
+                    position: relative;
                     display: -webkit-box;
                     display: -webkit-flex;
                     display: -ms-flexbox;
@@ -947,6 +953,7 @@ body {
       body > .overall_wrapper > .user_content_wrapper > .user_feed {
         visibility: hidden;
         position: absolute;
+        z-index: -1;
         top: 0px;
         width: 100%;
         height: 0px;
@@ -1506,3 +1513,70 @@ body {
     top: 170px;
     opacity: 1;
     visibility: visible; } }
+
+div.profile_details_inside:hover > .profile_details {
+  visibility: visible;
+  opacity: 1;
+  -webkit-transform: translate(-50%, 0px);
+  -ms-transform: translate(-50%, 0px);
+  transform: translate(-50%, 0px);
+  -webkit-transition: visibility 200ms ease 200ms, opacity 200ms ease 200ms, -webkit-transform 200ms ease 200ms;
+  transition: visibility 200ms ease 200ms, opacity 200ms ease 200ms, -webkit-transform 200ms ease 200ms;
+  -o-transition: visibility 200ms ease 200ms, opacity 200ms ease 200ms, transform 200ms ease 200ms;
+  transition: visibility 200ms ease 200ms, opacity 200ms ease 200ms, transform 200ms ease 200ms;
+  transition: visibility 200ms ease 200ms, opacity 200ms ease 200ms, transform 200ms ease 200ms, -webkit-transform 200ms ease 200ms; }
+
+div.profile_details_inside > .profile_details {
+  display: none;
+  position: absolute;
+  left: 50%;
+  z-index: 1;
+  pointer-events: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  top: calc(100% + 5px);
+  background-color: #4e004b;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 125, 255, 0.2);
+  -webkit-transition: visibility 150ms ease, opacity 150ms ease, -webkit-transform 150ms ease;
+  transition: visibility 150ms ease, opacity 150ms ease, -webkit-transform 150ms ease;
+  -o-transition: visibility 150ms ease, opacity 150ms ease, transform 150ms ease;
+  transition: visibility 150ms ease, opacity 150ms ease, transform 150ms ease;
+  transition: visibility 150ms ease, opacity 150ms ease, transform 150ms ease, -webkit-transform 150ms ease;
+  visibility: hidden;
+  opacity: 0;
+  -webkit-transform: translate(-50%, 20px);
+  -ms-transform: translate(-50%, 20px);
+  transform: translate(-50%, 20px);
+  color: white;
+  text-align: center;
+  font-family: Comfortaa;
+  font-size: 14px; }
+  div.profile_details_inside > .profile_details > h1 {
+    opacity: 0.5;
+    margin: 6px;
+    font-size: 14px; }
+    div.profile_details_inside > .profile_details > h1:last-of-type {
+      margin-top: 12px; }
+  div.profile_details_inside > .profile_details > p {
+    padding: 0;
+    margin: 6px; }
+    div.profile_details_inside > .profile_details > p > span.little {
+      font-size: 12px; }
+  div.profile_details_inside > .profile_details::before, div.profile_details_inside > .profile_details::after {
+    content: '';
+    position: absolute;
+    top: -17px;
+    left: calc(50% - 10px);
+    width: 0px;
+    height: 0px;
+    border-radius: 10px;
+    border-top: 10px solid transparent;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid rgba(255, 125, 255, 0.2); }
+  div.profile_details_inside > .profile_details::after {
+    top: -16px;
+    border-bottom: 10px solid #4e004b; }

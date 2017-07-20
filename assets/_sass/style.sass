@@ -62,7 +62,7 @@ $input_api_height: 36px
 // ______________ STYLES ______________ //
 
 html
-	min-width: $widthForUserContentWrapperWhenItsOpen + $gup * 2
+	min-width: $widthForUserContentWrapperWhenItsOpen + $gup * 5
 	height: 100%
 
 body
@@ -527,14 +527,8 @@ body
 						align-items: center
 						box-sizing: border-box
 						user-select: none
-
-						&::after
-							position: absolute
-							content: ''
-							top: 0
-							left: 0
-							width: 100%
-							height: 100%
+						background-color: white
+						border-radius: 4px
 
 						&:focus
 							outline: none
@@ -553,6 +547,16 @@ body
 							&::before
 								position: absolute
 								content: ''
+								top: 0
+								left: 0
+								width: 100%
+								height: 100%
+
+							&::after
+								position: absolute
+								content: ''
+								top: 0
+								left: 0
 								width: 100%
 								height: 100%
 
@@ -661,6 +665,8 @@ body
 									margin: 3px 0px
 									background: url("/assets/img/slashRanking.png")
 
+								> .profile_details
+
 						> .detail_row
 							cursor: default
 							display: flex
@@ -677,6 +683,7 @@ body
 
 								> div
 									display: flex
+									position: relative
 								
 									> h1, h2
 										margin: 0
@@ -714,6 +721,7 @@ body
 									justify-content: space-around
 									
 									> div
+										position: relative
 										display: flex
 										height: 100%
 										align-items: center
@@ -836,6 +844,7 @@ body
 			> .user_feed
 				visibility: hidden
 				position: absolute
+				z-index: -1
 				top: 0px
 				width: 100%
 				height: 0px
@@ -1263,3 +1272,67 @@ body
 							top: $topOfUserFeed
 							opacity: 1
 							visibility: visible
+
+
+// ____________ DETAIL PANEL ___________//
+
+div.profile_details_inside
+	&:hover > .profile_details
+		visibility: visible
+		opacity: 1
+		transform: translate(-50%, 0px)
+		transition: visibility 200ms ease 200ms, opacity 200ms ease 200ms, transform 200ms ease 200ms
+
+	> .profile_details
+		display: none
+		position: absolute
+		left: 50%
+		z-index: 1
+		pointer-events: none
+		user-select: none
+		top: calc(100% + 5px)
+		background-color: $lvlBarBgColorBottom
+		border-radius: 6px
+		border: $borderContent solid $user_profile_border_color
+		transition: visibility 150ms ease, opacity 150ms ease, transform 150ms ease
+		visibility: hidden
+		opacity: 0
+		transform: translate(-50%, 20px)
+		color: white
+		text-align: center
+		font: 
+			family: Comfortaa
+			size: 14px
+
+		> h1
+			opacity: 0.5
+			margin: 6px
+			font-size: 14px
+
+			&:last-of-type
+				margin-top: 12px
+
+		> p
+			padding: 0
+			// margin: 6px 0px 6px 10px
+			margin: 6px
+
+			> span.little
+				font-size: 12px
+
+		&::before, &::after
+			content: ''
+			position: absolute
+			top: -17px
+			left: calc(50% - 10px)
+			width: 0px
+			height: 0px
+			border-radius: 10px
+			border-top: 10px solid transparent
+			border-left: 10px solid transparent
+			border-right: 10px solid transparent
+			border-bottom: 10px solid $user_profile_border_color
+
+		&::after
+			top: -16px
+			border-bottom: 10px solid $lvlBarBgColorBottom

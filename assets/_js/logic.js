@@ -22,6 +22,13 @@ var
 	$user_profile_ranking_A_count,
 	$user_profile_lvl_current_level,
 	$user_profile_lvl_row_wrapper,
+	$user_profile_details_rank_and_pp,
+	$user_profile_details_accuracy,
+	$user_profile_details_playcount,
+	$user_profile_details_count_ss,
+	$user_profile_details_count_s,
+	$user_profile_details_count_a,
+	$user_profile_details_level,
 
 	$user_feed,
 	$plays_feed,
@@ -40,8 +47,9 @@ var
 	timeoutForRequestWhenWeTryToGetBeatmapInformation = 5000,
 	timeoutForRequestWhenWeTryToGetPPForRecentScore = 5000,
 	timeForNewRequestForPPByRecentScore = 1000,
-	timeForUpdateProfileAfterNewRecentScore = 5000,
+	timeForUpdateProfileAfterNewRecentScore = 2000,
 	timeoutForUpdateProfileAfterNewRecentScore = 5000,
+	timeoutForGettingPpBecausePpyHaveShittyServers = 500,
 
 	scoreDateRangeError = 5000, // in ms
 	
@@ -142,12 +150,18 @@ function showUser (user) { // Показываем поцана
 	$user_profile_ranking_pp.html(Math.round(user.pp_raw) + '<span>pp</span>');
 	$user_profile_ranking_rank.text('#' + (user.pp_rank ? user.pp_rank  : 'inactive'));
 	$user_profile_acc.text((Math.round(user.accuracy * 100) / 100) + '%');
+		$user_profile_details_accuracy.find('p:first').text((Math.round(user.accuracy * 100) / 100) + '%');
 	$user_profile_pc.text(user.playcount ? user.playcount : '0');
+		$user_profile_details_playcount.find('p:first').text(user.playcount ? user.playcount : '0');
 	$user_profile_ranking_SS_count.text(user.count_rank_ss ? countRanking(user.count_rank_ss) : 0);
+		$user_profile_details_count_ss.find('p:first').text(user.count_rank_ss ? countRanking(user.count_rank_ss) : 0);
 	$user_profile_ranking_S_count.text(user.count_rank_s ? countRanking(user.count_rank_s) : 0);
+		$user_profile_details_count_s.find('p:first').text(user.count_rank_s ? countRanking(user.count_rank_s) : 0);
 	$user_profile_ranking_A_count.text(user.count_rank_a ? countRanking(user.count_rank_a) : 0);
-	$user_profile_lvl_row_wrapper.css('width', (user.level && user.level.replace(/\d+\.?/,'') ? user.level.replace(/\d+\.?/,'') : '0').match(/\d{0,2}/)[0] * mainWidth / 100);
+		$user_profile_details_count_a.find('p:first').text(user.count_rank_a ? countRanking(user.count_rank_a) : 0);
+	$user_profile_lvl_row_wrapper.css('width', (user.level && user.level.replace(/\d+\.?/,'') ? user.level.replace(/\d+\.?/,'0.') : '0') * mainWidth);
 	$user_profile_lvl_current_level.text(" " + (user.level ? user.level.replace(/\.\d+/, '') : '0'));
+		$user_profile_details_level.find('p:first').text(Math.floor(Number(user.level) * 100) / 100 );
 } // Показываем поцана
 
 function startWatch (user) {
@@ -195,7 +209,7 @@ function startWatch (user) {
 			type: "GET",
 			data: {k: APIkey, u: user.user_id, event_days: '1'},
 			success: function(xhrUserProfile) {
-				let skippedProperties = ['count50', 'count100', 'count300', 'country', 'events', 'ranked_score', 'total_score', 'user_id', 'username'];
+				let skippedProperties = ['count50', 'count100', 'count300', 'country', 'events', 'ranked_score', 'total_score', 'user_id', 'username', 'pp_country_rank'];
 				let colorUp = "0px 0px 4px black, 0px 0px 6px lightgreen, 0px 0px 10px lightgreen";
 				let colorDown = "0px 0px 4px black, 0px 0px 6px red, 0px 0px 10px red";
 				xhrUserProfile = xhrUserProfile[0];
@@ -207,61 +221,115 @@ function startWatch (user) {
 							case 'playcount' :
 								$user_profile_pc.text(xhrUserProfile.playcount);
 								$user_profile_pc.css('text-shadow', colorUp);
+								$user_profile_details_playcount.show(); 
+								$user_profile_details_playcount.find('p:last').text('+ ' + (xhrUserProfile.playcount - userInitalState.playcount));
 								break;
 							case 'accuracy' :
-								$user_profile_acc.text((Math.round(xhrUserProfile.accuracy * 100) / 100) + '%');
-								if (xhrUserProfile.accuracy !== userInitalState.accuracy)
-									$user_profile_acc.css('text-shadow', Number(xhrUserProfile.accuracy) > Number(userInitalState.accuracy) ? colorUp : colorDown);
-								else
+								let initalAcc = Math.round(userInitalState.accuracy * 100) / 100;
+								let currentAcc = Math.round(xhrUserProfile.accuracy * 100) / 100;
+								$user_profile_acc.text(currentAcc + '%');
+								if (initalAcc !== currentAcc) {
+									$user_profile_acc.css('text-shadow', currentAcc > initalAcc ? colorUp : colorDown);
+									$user_profile_details_accuracy.show();
+									$user_profile_details_accuracy.find('p:last').text((currentAcc > initalAcc ? '+ ' : '- ') + (Math.round(Math.abs(currentAcc - initalAcc) * 100) / 100) + '%');
+								}
+								else {
+									$user_profile_details_accuracy.hide();
 									$user_profile_acc.css('text-shadow', '');
+								}
 								break;
 							case 'count_rank_a' :
 								$user_profile_ranking_A_count.text(xhrUserProfile.count_rank_a ? countRanking(xhrUserProfile.count_rank_a) : 0);
-								if (xhrUserProfile.count_rank_a !== userInitalState.count_rank_a)
+								if (xhrUserProfile.count_rank_a !== userInitalState.count_rank_a) {
 									$user_profile_ranking_A_count.css('text-shadow', Number(xhrUserProfile.count_rank_a) > Number(userInitalState.count_rank_a) ? colorUp : colorDown);
-								else
+									$user_profile_details_count_a.find('p:last').text((Number(xhrUserProfile.count_rank_a) > Number(userInitalState.count_rank_a) ? '+ ' : '- ') + Math.abs(Number(xhrUserProfile.count_rank_a) - Number(userInitalState.count_rank_a)));
+									$user_profile_details_count_a.show();
+								}
+								else {
 									$user_profile_ranking_A_count.css('text-shadow', '');
+									$user_profile_details_count_a.hide();
+								}
 								break;
 							case 'count_rank_s' :
 								$user_profile_ranking_S_count.text(xhrUserProfile.count_rank_s ? countRanking(xhrUserProfile.count_rank_s) : 0);
-								if (xhrUserProfile.count_rank_s !== userInitalState.count_rank_s)
+								if (xhrUserProfile.count_rank_s !== userInitalState.count_rank_s) {
 									$user_profile_ranking_S_count.css('text-shadow', Number(xhrUserProfile.count_rank_s) > Number(userInitalState.count_rank_s) ? colorUp : colorDown);
-								else
+									$user_profile_details_count_s.find('p:last').text((Number(xhrUserProfile.count_rank_s) > Number(userInitalState.count_rank_s) ? '+ ' : '- ') + Math.abs(Number(xhrUserProfile.count_rank_s) - Number(userInitalState.count_rank_s)));
+									$user_profile_details_count_s.show();
+								}
+								else {
 									$user_profile_ranking_S_count.css('text-shadow', '');
+									$user_profile_details_count_s.hide();
+								}
 								break;
 							case 'count_rank_ss' :
 								$user_profile_ranking_SS_count.text(xhrUserProfile.count_rank_ss ? countRanking(xhrUserProfile.count_rank_ss) : 0);
-								if (xhrUserProfile.count_rank_ss !== userInitalState.count_rank_ss)
+								if (xhrUserProfile.count_rank_ss !== userInitalState.count_rank_ss) {
 									$user_profile_ranking_SS_count.css('text-shadow', Number(xhrUserProfile.count_rank_ss) > Number(userInitalState.count_rank_ss) ? colorUp : colorDown);
-								else
+									$user_profile_details_count_ss.find('p:last').text((Number(xhrUserProfile.count_rank_ss) > Number(userInitalState.count_rank_ss) ? '+ ' : '- ') + Math.abs(Number(xhrUserProfile.count_rank_ss) - Number(userInitalState.count_rank_ss)));
+									$user_profile_details_count_ss.show();
+								}
+								else {
 									$user_profile_ranking_SS_count.css('text-shadow', '');
+									$user_profile_details_count_ss.hide();
+								}
 								break;
 							case 'pp_raw' :
-								$user_profile_ranking_pp.html(Math.round(xhrUserProfile.pp_raw) + '<span>pp</span>');
-								if (xhrUserProfile.pp_raw !== userInitalState.pp_raw)
-									$user_profile_ranking_pp.css('text-shadow', Number(xhrUserProfile.pp_raw) > Number(userInitalState.pp_raw) ? colorUp : colorDown);
-								else
+								let ppCurrent = Math.round(xhrUserProfile.pp_raw);
+								let ppInital =  Math.round(userInitalState.pp_raw);
+								$user_profile_ranking_pp.html(ppCurrent + '<span>pp</span>');
+								if (ppCurrent !== ppInital) {
+									$user_profile_ranking_pp.css('text-shadow', ppCurrent > ppInital ? colorUp : colorDown);
+									$user_profile_details_rank_and_pp.show();
+									$user_profile_details_rank_and_pp.find('p:nth-of-type(1)').html(ppInital + '<span class="little">pp</span>');
+									$user_profile_details_rank_and_pp.find('p:nth-of-type(3)').html((ppCurrent > ppInital ? '+ ' : '- ') + Math.abs(ppCurrent - ppInital) + '<span class="little">pp</span>');
+								}
+								else {
 									$user_profile_ranking_pp.css('text-shadow', '');
+									$user_profile_details_rank_and_pp.find('p:nth-of-type(1)').html('');
+									$user_profile_details_rank_and_pp.find('p:nth-of-type(3)').html('');
+								}
+								if (xhrUserProfile.pp_raw !== userInitalState.pp_raw || xhrUserProfile.pp_rank !== userInitalState.pp_rank)
+									$user_profile_details_rank_and_pp.show();
+								else
+									$user_profile_details_rank_and_pp.hide();
 								break;
 							case 'pp_rank' :
-								$user_profile_ranking_rank.text('#' + xhrUserProfile.pp_rank);
-								if (xhrUserProfile.pp_rank !== userInitalState.pp_rank)
-									$user_profile_ranking_rank.css('text-shadow', Number(xhrUserProfile.pp_rank) > Number(userInitalState.pp_rank) ? colorDown : colorUp);
-								else
+								let pp_rank_current = Number(xhrUserProfile.pp_rank);
+								let pp_rank_inital  = Number(userInitalState.pp_rank);
+								$user_profile_ranking_rank.text('#' + pp_rank_current);
+								if (pp_rank_current !== pp_rank_inital) {
+									$user_profile_ranking_rank.css('text-shadow', pp_rank_current > pp_rank_inital ? colorDown : colorUp);
+									$user_profile_details_rank_and_pp.show();
+									$user_profile_details_rank_and_pp.find('p:nth-of-type(2)').text('#' + (pp_rank_inital ? pp_rank_inital  : 'inactive'));
+									$user_profile_details_rank_and_pp.find('p:nth-of-type(4)').text((pp_rank_current < pp_rank_inital ? '+ ' : '- ') + '#' + Math.abs(pp_rank_current - pp_rank_inital));
+								}
+								else {
 									$user_profile_ranking_rank.css('text-shadow', '');
+									$user_profile_details_rank_and_pp.find('p:nth-of-type(2)').text('');
+									$user_profile_details_rank_and_pp.find('p:nth-of-type(4)').text('');
+								}
+								if (xhrUserProfile.pp_raw !== userInitalState.pp_raw || xhrUserProfile.pp_rank !== userInitalState.pp_rank)
+									$user_profile_details_rank_and_pp.show();
+								else
+									$user_profile_details_rank_and_pp.hide();
 								break;
 							case 'level' :
-								$user_profile_lvl_row_wrapper.css('width', (xhrUserProfile.level && xhrUserProfile.level.replace(/\d+\.?/,'') ? xhrUserProfile.level.replace(/\d+\.?/,'') : '0').match(/\d{0,2}/)[0] * mainWidth / 100);
+								$user_profile_lvl_row_wrapper.css('width', (xhrUserProfile.level && xhrUserProfile.level.replace(/\d+\.?/,'') ? xhrUserProfile.level.replace(/\d+\.?/,'0.') : '0') * mainWidth);
 								$user_profile_lvl_current_level.text(" " + xhrUserProfile.level.replace(/\.\d+/, ''));
-								if (xhrUserProfile.level !== userInitalState.level)
-									$user_profile_lvl_current_level.css('text-shadow', Number(xhrUserProfile.level) > Number(userInitalState.level) ? colorUp : colorDown);
-								else
+								let currentLvl = Math.floor(Number(xhrUserProfile.level) * 100) / 100;
+								let initalLvl  = Math.floor(Number(userInitalState.level) * 100) / 100;
+								if (currentLvl !== initalLvl) {
+									$user_profile_lvl_current_level.css('text-shadow', currentLvl > initalLvl ? colorUp : colorDown);
+									$user_profile_details_level.show();
+									$user_profile_details_level.find('p:last').text((currentLvl > initalLvl ? '+ ' : '- ') + (Math.floor(Math.abs(currentLvl - initalLvl) * 100) / 100));
+								}
+								else {
 									$user_profile_lvl_current_level.css('text-shadow', '');
+									$user_profile_details_level.hide();
+								}
 								break;
-							// case 'pp_country_rank' :
-							// 	break;
 							default :
-								console.warn('Cвойство пропущено: ', property);
 								continue;
 						}
 					}
@@ -270,11 +338,8 @@ function startWatch (user) {
 				isUpdatingProfileNow = false;
 				latestProfileState = xhrUserProfile;
 			},
-			error: function(jqXHR) {
-				if (jqXHR.statusText == 'timeout') {
-					updateProfile();
-					return;
-				}
+			error: function() {
+				updateProfile();
 			},
 			timeout: timeoutForUpdateProfileAfterNewRecentScore
 		});
@@ -422,7 +487,7 @@ function startWatch (user) {
 						console.groupEnd();
 					}
 					else
-						getPP($addedScore, recentScoreData);
+						setTimeout(() => {getPP($addedScore, recentScoreData);}, timeoutForGettingPpBecausePpyHaveShittyServers);
 
 					isFilterResultEmpty();
 
@@ -537,11 +602,18 @@ $(function() {
 	$user_profile_ranking_rank = $('.user_profile .user_stuff .username_and_ranking .ranking h2.rank');
 	$user_profile_acc = $('.user_profile .user_stuff .detail_row .acc_and_pc .acc h2');
 	$user_profile_pc = $('.user_profile .user_stuff .detail_row .acc_and_pc .pc h2');
-	$user_profile_ranking_SS_count = $('.user_profile .user_stuff .detail_row .count_ranks_row .count_ranks_wrapper .cout_ss h1');
-	$user_profile_ranking_S_count = $('.user_profile .user_stuff .detail_row .count_ranks_row .count_ranks_wrapper .cout_s h1');
-	$user_profile_ranking_A_count = $('.user_profile .user_stuff .detail_row .count_ranks_row .count_ranks_wrapper .cout_a h1');
+	$user_profile_ranking_SS_count = $('.user_profile .user_stuff .detail_row .count_ranks_row .count_ranks_wrapper .cout_ss > h1');
+	$user_profile_ranking_S_count = $('.user_profile .user_stuff .detail_row .count_ranks_row .count_ranks_wrapper .cout_s > h1');
+	$user_profile_ranking_A_count = $('.user_profile .user_stuff .detail_row .count_ranks_row .count_ranks_wrapper .cout_a > h1');
 	$user_profile_lvl_current_level = $('.user_profile .user_stuff .lvl_row .current_level span');
 	$user_profile_lvl_row_wrapper = $('.user_profile .user_stuff .lvl_row .lvl_bar_wrapper');
+	$user_profile_details_rank_and_pp = $('#details_rank_and_pp');
+	$user_profile_details_accuracy 		= $('#details_accuracy');
+	$user_profile_details_playcount		= $('#details_playcount');
+	$user_profile_details_count_ss 		= $('#details_count_ss');
+	$user_profile_details_count_s 		= $('#details_count_s');
+	$user_profile_details_count_a 		= $('#details_count_a');
+	$user_profile_details_level 			= $('#details_level');
 
 	$user_feed = $('.user_feed');
 	$plays_feed = $('.user_feed .plays_feed');
